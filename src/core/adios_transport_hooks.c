@@ -115,11 +115,13 @@ void adios_init_transports (struct adios_transport_struct ** t)
 
     ASSIGN_FNS(posix,ADIOS_METHOD_POSIX,"POSIX")
     // POSIX1 removed, POSIX with MPI_COMM_NULL does the same
-    //ASSIGN_FNS(posix1,ADIOS_METHOD_POSIX1,"POSIX1") 
+    //ASSIGN_FNS(posix1,ADIOS_METHOD_POSIX1,"POSIX1")
 
 #  ifndef NO_RESEARCH_TRANSPORTS
     //ASSIGN_FNS(provenance,ADIOS_METHOD_PROVENANCE)
 #  endif
+
+    ASSIGN_FNS(uniman,ADIOS_METHOD_UNIMAN,"UNIMAN")
 
 #endif /* ADIOS_EMPTY_TRANSPORTS */
     }
@@ -195,6 +197,8 @@ int adios_parse_method (const char * buf, enum ADIOS_IO_METHOD * method
 #endif
 
     MATCH_STRING_TO_METHOD("NULL",ADIOS_METHOD_NULL,0)
+
+    MATCH_STRING_TO_METHOD("UNIMAN",ADIOS_METHOD_UNIMAN,0)
 
     *method = ADIOS_METHOD_UNKNOWN;
     *requires_group_comm = 0;
