@@ -134,7 +134,7 @@ enum ADIOS_IO_METHOD {ADIOS_METHOD_UNKNOWN     = -2
               ,ADIOS_METHOD_VAR_MERGE   = 22
               ,ADIOS_METHOD_MPI_BGQ     = 23
               ,ADIOS_METHOD_ICEE        = 24
-              ,ADIOS_METHOD_UNIMAN      = 25
+              ,ADIOS_METHOD_DATAMAN      = 25
               ,ADIOS_METHOD_COUNT       = 26
 };
 
@@ -171,7 +171,7 @@ enum ADIOS_IO_METHOD {ADIOS_METHOD_UNKNOWN     = -2
      FORWARD_DECLARE(posix1)
      FORWARD_DECLARE(provenance)
      FORWARD_DECLARE(adaptive)
-     FORWARD_DECLARE(uniman)
+     FORWARD_DECLARE(dataman)
 #endif
 
 #if defined(HAVE_DATASPACES) && !defined(ADIOS_EMPTY_TRANSPORTS)

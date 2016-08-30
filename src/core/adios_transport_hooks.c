@@ -121,7 +121,7 @@ void adios_init_transports (struct adios_transport_struct ** t)
     //ASSIGN_FNS(provenance,ADIOS_METHOD_PROVENANCE)
 #  endif
 
-    ASSIGN_FNS(uniman,ADIOS_METHOD_UNIMAN,"UNIMAN")
+    ASSIGN_FNS(dataman,ADIOS_METHOD_DATAMAN,"DATAMAN")
 
 #endif /* ADIOS_EMPTY_TRANSPORTS */
     }
@@ -198,7 +198,7 @@ int adios_parse_method (const char * buf, enum ADIOS_IO_METHOD * method
 
     MATCH_STRING_TO_METHOD("NULL",ADIOS_METHOD_NULL,0)
 
-    MATCH_STRING_TO_METHOD("UNIMAN",ADIOS_METHOD_UNIMAN,0)
+    MATCH_STRING_TO_METHOD("DATAMAN",ADIOS_METHOD_DATAMAN,0)
 
     *method = ADIOS_METHOD_UNKNOWN;
     *requires_group_comm = 0;
