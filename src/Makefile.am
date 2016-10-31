@@ -186,7 +186,9 @@ CLibSources =           core/adios.c \
                         read/read_bp.c \
                         read/read_bp_staged.c \
                         read/read_bp_staged1.c \
-                        write/adios_posix.c 
+                        write/adios_posix.c \
+                        write/adios_dataman.c 
+
 
 CLibParallelSources =   write/adios_mpi.c \
                         write/adios_mpi_lustre.c \
@@ -211,7 +213,8 @@ FortranLibSources =     core/adiosf.c \
                         read/read_bp.c \
                         read/read_bp_staged.c \
                         read/read_bp_staged1.c \
-                        write/adios_posix.c 
+                        write/adios_posix.c \
+                        write/adios_dataman.c 
 
 FortranLibParallelSources =  write/adios_mpi.c \
                         write/adios_mpi_lustre.c \

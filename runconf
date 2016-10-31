@@ -692,7 +692,8 @@ elif [ `hostname | cut -c 1-6` == "edison" ]; then
     	--without-infiniband \
         --without-hdf5 --without-netcdf
 
-elif [ `hostname | cut -c 1-4` == "dyn9" -o `hostname | cut -c 1-3` == "pnb" ]; then
+#elif [ `hostname | cut -c 1-4` == "dyn9" -o `hostname | cut -c 1-3` == "pnb" ]; then
+elif [ `hostname | cut -c 1-9` == "PC0107009" -o `hostname | cut -c 1-3` == "pnb" ]; then
 
     #######
     # Mac #
