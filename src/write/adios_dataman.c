@@ -5,7 +5,7 @@
 #include "public/adios_types.h"
 
 void *so = 0;
-void (*write_func)(const void *data, const char *name, const char *var, const char *type) = 0;
+void (*write_func)(const void *data, const char *name, const char *var, const char *type, unsigned long *putshape, unsigned long *varshape, unsigned long *offsets) = 0;
 void (*init_func)() = 0;
 int (*open_func)() = 0;
 
@@ -49,15 +49,17 @@ enum BUFFERING_STRATEGY adios_dataman_should_buffer (struct adios_file_struct * 
 }
 
 void adios_dataman_write(
-    struct adios_file_struct *fd,
-    struct adios_var_struct *f,
+    struct adios_file_struct *f,
+    struct adios_var_struct *v,
     const void *data,
     struct adios_method_struct *method)
 {
     printf("adios_dataman.c: adios_dataman_write \n");
     check_library();
+
+    // data type
     char type[20]="unknown";
-    switch (f->type){
+    switch (v->type){
         case adios_real:
             sprintf(type, "float");
             break;
@@ -67,7 +69,40 @@ void adios_dataman_write(
         default:
             break;
     }
-    write_func(data, fd->name, f->name, type);
+
+    // dimensions
+    struct adios_dimension_struct * d = v->dimensions;
+    int ndims=count_dimensions(v->dimensions);
+    uint64_t putshape[ndims+1], offsets[ndims+1], varshape[ndims+1];
+    uint8_t dims_count = 0;
+
+    if(ndims){
+        while(d){
+            putshape[0]=ndims;
+            varshape[0]=ndims;
+            offsets[0]=ndims;
+            dims_count++;
+            uint64_t dim;
+            //local dimension
+            dim = adios_get_dim_value (&d->dimension);
+            putshape[dims_count]=dim;
+            //global dimension
+            dim = adios_get_dim_value (&d->global_dimension);
+            varshape[dims_count]=dim;
+            //local offsets
+            dim = adios_get_dim_value (&d->local_offset);
+            offsets[dims_count]=dim;
+            d=d->next;
+        }
+    }
+
+    int i;
+    printf("ndims=%d\n", ndims);
+    for(i=0; i<ndims+1; i++)
+        printf("varshape[%d]=%d, putshape[%d]=%d, offset[%d]=%d\n", i, varshape[i], i, putshape[i], i, offsets[i] );
+
+
+    write_func(data, f->name, v->name, type, putshape, varshape, offsets);
 }
 
 void adios_dataman_close (struct adios_file_struct * fd
