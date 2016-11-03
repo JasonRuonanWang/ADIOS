@@ -1,10 +1,11 @@
 #include <stdio.h>
 #include <dlfcn.h>
 #include "core/adios_transport_hooks.h"
+#include "core/adios_internals.h"
 #include "public/adios_types.h"
 
 void *so = 0;
-void (*write_func)(const void *data) = 0;
+void (*write_func)(const void *data, const char *name, const char *var, const char *type) = 0;
 void (*init_func)() = 0;
 int (*open_func)() = 0;
 
@@ -55,7 +56,18 @@ void adios_dataman_write(
 {
     printf("adios_dataman.c: adios_dataman_write \n");
     check_library();
-    write_func(data);
+    char type[20]="unknown";
+    switch (f->type){
+        case adios_real:
+            sprintf(type, "float");
+            break;
+        case adios_integer:
+            sprintf(type, "int");
+            break;
+        default:
+            break;
+    }
+    write_func(data, fd->name, f->name, type);
 }
 
 void adios_dataman_close (struct adios_file_struct * fd
