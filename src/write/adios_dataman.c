@@ -4,10 +4,11 @@
 #include "core/adios_internals.h"
 #include "public/adios_types.h"
 
-void *so = 0;
-void (*write_func)(const void *data, const char *name, const char *var, const char *type, unsigned long *putshape, unsigned long *varshape, unsigned long *offsets) = 0;
-void (*init_func)() = 0;
-int (*open_func)() = 0;
+void *so = NULL;
+void (*write_func)(const void *data, const char *name, const char *var, const char *type, uint64_t *putshape, uint64_t *varshape, uint64_t *offsets) = NULL;
+void (*init_func)() = NULL;
+int  (*open_func)() = NULL;
+void (*term_func)() = NULL;
 
 void check_library(){
     if (!so) so=dlopen("./libdataman.so",RTLD_NOW);
@@ -19,6 +20,8 @@ void check_library(){
     if (!open_func) printf("dataman_open_c not found in libdataman.so\n");
     if (!write_func) write_func=dlsym(so,"dataman_write_c");
     if (!write_func) printf("dataman_write_c not found in libdataman.so\n");
+    if (!term_func) term_func=dlsym(so,"dataman_terminate_c");
+    if (!term_func) printf("dataman_terminate_c not found in libdataman.so\n");
 }
 
 
@@ -96,11 +99,12 @@ void adios_dataman_write(
         }
     }
 
+    /*
     int i;
     printf("ndims=%d\n", ndims);
     for(i=0; i<ndims+1; i++)
         printf("varshape[%d]=%d, putshape[%d]=%d, offset[%d]=%d\n", i, varshape[i], i, putshape[i], i, offsets[i] );
-
+    */
 
     write_func(data, f->name, v->name, type, putshape, varshape, offsets);
 }
@@ -114,6 +118,7 @@ void adios_dataman_close (struct adios_file_struct * fd
 void adios_dataman_finalize (int mype, struct adios_method_struct * method)
 {
     printf("adios_dataman_finalize \n");
+    term_func();
     if (so) dlclose(so);
 }
 
