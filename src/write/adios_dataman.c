@@ -5,21 +5,28 @@
 #include "public/adios_types.h"
 
 void *so = NULL;
-void (*write_func)(const void *data, const char *name, const char *var, const char *type, uint64_t *putshape, uint64_t *varshape, uint64_t *offsets) = NULL;
 void (*init_func)() = NULL;
 int  (*open_func)() = NULL;
+void (*write_func)(const void *data, const char *name, const char *var, const char *type, uint64_t *putshape, uint64_t *varshape, uint64_t *offsets) = NULL;
+void (*close_func)() = NULL;
 void (*term_func)() = NULL;
 
-void check_library(){
+void adios_dataman_check_library(){
     if (!so) so=dlopen("./libdataman.so",RTLD_NOW);
     if (!so) printf("libdataman.so not found\n");
 
     if (!init_func) init_func=dlsym(so,"dataman_init_c");
     if (!init_func) printf("dataman_init_c not found in libdataman.so\n");
-    if (!open_func) open_func=dlsym(so,"dataman_open_c");
-    if (!open_func) printf("dataman_open_c not found in libdataman.so\n");
+
+    if (!open_func) open_func=dlsym(so,"dataman_prepare_c");
+    if (!open_func) printf("dataman_prepare_c not found in libdataman.so\n");
+
     if (!write_func) write_func=dlsym(so,"dataman_write_c");
     if (!write_func) printf("dataman_write_c not found in libdataman.so\n");
+
+    if (!close_func) close_func=dlsym(so,"dataman_flush_c");
+    if (!close_func) printf("dataman_flush_c not found in libdataman.so\n");
+
     if (!term_func) term_func=dlsym(so,"dataman_terminate_c");
     if (!term_func) printf("dataman_terminate_c not found in libdataman.so\n");
 }
@@ -30,7 +37,7 @@ void adios_dataman_init (const PairStruct * parameters
                       )
 {
     printf("adios_dataman.c: adios_dataman_init \n");
-    check_library();
+    adios_dataman_check_library();
     init_func();
 }
 
@@ -40,7 +47,7 @@ int adios_dataman_open (
         MPI_Comm comm)
 {
     printf("adios_dataman.c: adios_dataman_open \n");
-    check_library();
+    adios_dataman_check_library();
     return open_func();
 }
 
@@ -58,7 +65,7 @@ void adios_dataman_write(
     struct adios_method_struct *method)
 {
     printf("adios_dataman.c: adios_dataman_write \n");
-    check_library();
+    adios_dataman_check_library();
 
     // data type
     char type[20]="unknown";
@@ -113,6 +120,8 @@ void adios_dataman_close (struct adios_file_struct * fd
                        ,struct adios_method_struct * method
                        )
 {
+    printf("adios_dataman_flush \n");
+    close_func();
 }
 
 void adios_dataman_finalize (int mype, struct adios_method_struct * method)
