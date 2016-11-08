@@ -86,11 +86,11 @@ void adios_dataman_write(
     uint64_t putshape[ndims+1], offsets[ndims+1], varshape[ndims+1];
     uint8_t dims_count = 0;
 
+    putshape[0]=ndims;
+    varshape[0]=ndims;
+    offsets[0]=ndims;
     if(ndims){
         while(d){
-            putshape[0]=ndims;
-            varshape[0]=ndims;
-            offsets[0]=ndims;
             dims_count++;
             uint64_t dim;
             //local dimension
